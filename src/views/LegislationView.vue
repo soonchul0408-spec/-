@@ -27,18 +27,24 @@ const filterRegionOptions = computed(() => {
 })
 
 const filteredItems = computed(() =>
-  dataStore.items.filter((item) => {
-    const matchesRegion =
-      selectedRegion.value === '전체' ||
-      (selectedRegion.value === SAVED_REGION_FILTER
-        ? analysisStore.savedRegions.includes(item.region)
-        : item.region === selectedRegion.value)
-    const matchesCategory =
-      selectedCategory.value === '전체' || item.category === selectedCategory.value
-    const matchesStage = selectedStage.value === '전체' || item.stage === selectedStage.value
+  dataStore.items
+    .filter((item) => {
+      const matchesRegion =
+        selectedRegion.value === '전체' ||
+        (selectedRegion.value === SAVED_REGION_FILTER
+          ? analysisStore.savedRegions.includes(item.region)
+          : item.region === selectedRegion.value)
+      const matchesCategory =
+        selectedCategory.value === '전체' || item.category === selectedCategory.value
+      const matchesStage = selectedStage.value === '전체' || item.stage === selectedStage.value
 
-    return matchesRegion && matchesCategory && matchesStage
-  }),
+      return matchesRegion && matchesCategory && matchesStage
+    })
+    .sort((a, b) => {
+      const aDate = Number(String(a.proposedAt ?? '').replaceAll('.', '')) || 0
+      const bDate = Number(String(b.proposedAt ?? '').replaceAll('.', '')) || 0
+      return bDate - aDate
+    }),
 )
 
 const activeRegionLabel = computed(() => {
@@ -121,7 +127,10 @@ onMounted(() => {
           <p class="section-eyebrow">PUBLIC LEGISLATION DATA</p>
           <h2>법안 진행 정보</h2>
         </div>
-        <el-tag type="info" effect="plain">{{ filteredItems.length }}건</el-tag>
+        <div class="results-heading__meta">
+          <el-tag type="success" effect="plain">최근 제안일 순</el-tag>
+          <el-tag type="info" effect="plain">{{ filteredItems.length }}건</el-tag>
+        </div>
       </div>
 
       <div v-if="dataStore.status === 'loading'" class="card-grid loading-grid" aria-busy="true">
@@ -281,6 +290,12 @@ onMounted(() => {
   font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.05em;
+}
+
+.results-heading__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .card-grid {

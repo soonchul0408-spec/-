@@ -5,9 +5,11 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
+const isLanding = computed(() => route.path === '/')
+
 const activeMenu = computed(() => {
   if (route.path.startsWith('/national-map')) return '/national-map'
-  if (route.path === '/' || route.path.startsWith('/regional-industry')) return '/regional-industry'
+  if (route.path.startsWith('/regional-industry')) return '/regional-industry'
   if (route.path.startsWith('/legislation')) return '/legislation'
   if (route.path.startsWith('/my-analysis')) return '/my-analysis'
   if (route.path === '/about') return '/about'
@@ -21,9 +23,9 @@ function handleMenuSelect(path) {
 
 <template>
   <div class="app-shell">
-    <header class="site-header">
+    <header v-if="!isLanding" class="site-header">
       <div class="site-header__inner">
-        <router-link to="/regional-industry" class="brand">
+        <router-link to="/" class="brand">
           <span class="brand-mark">RI</span>
           <span class="brand-copy">
             <strong>지역산업 인사이트</strong>
@@ -47,7 +49,7 @@ function handleMenuSelect(path) {
       </div>
     </header>
 
-    <main class="app-content">
+    <main class="app-content" :class="{ 'app-content--landing': isLanding }">
       <router-view />
     </main>
   </div>
@@ -145,6 +147,10 @@ function handleMenuSelect(path) {
 
 .app-content {
   min-height: calc(100vh - 72px);
+}
+
+.app-content--landing {
+  min-height: 100vh;
 }
 
 @media (max-width: 680px) {
