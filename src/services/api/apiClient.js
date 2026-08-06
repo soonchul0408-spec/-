@@ -2,7 +2,9 @@ import axios from 'axios'
 
 const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '')
 
-export const isApiEnabled = import.meta.env.VITE_API_ENABLED === 'true'
+// Vercel에서는 별도 공개 플래그가 없어도 서버 함수 호출을 시도합니다.
+// 명시적으로 false를 설정한 로컬 환경만 API 호출을 끕니다.
+export const isApiEnabled = import.meta.env.VITE_API_ENABLED !== 'false'
 
 const regionalIndustryClient = axios.create({
   baseURL: API_BASE_URL,

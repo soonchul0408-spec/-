@@ -5,7 +5,7 @@ const legislationApiFlag = import.meta.env.VITE_LEGISLATION_API_ENABLED
 
 export const isLegislationApiEnabled =
   legislationApiFlag === undefined
-    ? import.meta.env.VITE_API_ENABLED === 'true'
+    ? import.meta.env.VITE_API_ENABLED !== 'false'
     : legislationApiFlag === 'true'
 
 const legislationClient = axios.create({
